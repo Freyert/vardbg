@@ -107,7 +107,8 @@ class Tracer(abc.ABC):
             self.profile_complete_frame(scope.prev_frame_info, call_time)
 
         # Get new locals and copy them so they don't change on the next frame
-        scope.new_locals = copy.deepcopy(frame.f_locals)
+        # Python 3.13+ returns FrameLocalsProxy, so convert to dict first
+        scope.new_locals = copy.deepcopy(dict(frame.f_locals))
 
         # Render output prefix for this frame
         self.out.write_cur_frame(scope.prev_frame_info, self.stdout_buf.getvalue())
